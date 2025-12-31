@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SMARTO ATTEND</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>SMARTO ATTEND</h1>
+    <p>Smart Attendance System</p>
+    <div class="menu">
+        <a href="/add_student"><button>Add Student</button></a>
+        <a href="/students"><button>Manage Students</button></a>
+        <a href="/attendance"><button>Live Attendance</button></a>
+        <a href="/train"><button style="background-color: #28a745;">Train Face Model</button></a>
+        <a href="/export"><button>Export Excel</button></a>
+        <button onclick="window.close()">Exit</button>
+    </div>
+</body>
+
+</html>

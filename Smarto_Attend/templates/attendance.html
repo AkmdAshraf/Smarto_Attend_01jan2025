@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Live Attendance - SMARTO ATTEND</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // Auto-refresh logs every 2 seconds? Or keep it simple.
+    </script>
+</head>
+
+<body>
+    <h1>Live Attendance</h1>
+    <div class="attendance-container" style="display: flex; gap: 20px; justify-content: center;">
+
+        <div class="logs-panel"
+            style="width: 300px; text-align: left; background: #333; padding: 20px; border-radius: 10px;">
+            <h3>Attendance Log</h3>
+            <p style="color: #aaa; font-size: 14px;">(Refresh page to see updates)</p>
+            <ul>
+                <!-- We can populate this via template or AJAX. For now, we just link to export -->
+                <li><a href="/export" style="color: #4da6ff;">View Data ></a></li>
+            </ul>
+        </div>
+
+        <div class="camera-panel">
+            <img src="{{ url_for('video_feed_attendance') }}" width="640" height="480"
+                style="border: 2px solid #4da6ff; border-radius: 10px;">
+            <p>Move your face across the line to mark attendance.</p>
+        </div>
+
+    </div>
+    <br>
+    <a href="/"><button class="secondary">Back to Home</button></a>
+</body>
+
+</html>

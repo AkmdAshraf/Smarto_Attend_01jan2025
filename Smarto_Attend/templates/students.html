@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Students - SMARTO ATTEND</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Registered Students</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        {% if students %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll Number</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for roll, data in students.items() %}
+                <tr>
+                    <td>{{ roll }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_student', roll_no=roll) }}"
+                            onclick="return confirm('Are you sure you want to delete this student?');">
+                            <button class="delete-btn">Delete</button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No students registered yet.</p>
+        {% endif %}
+        <br>
+        <a href="/"><button class="secondary">Back to Home</button></a>
+    </div>
+</body>
+
+</html>

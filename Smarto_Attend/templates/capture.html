@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Capture Photos - SMARTO ATTEND</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta http-equiv="refresh" content="40;url={{ url_for('home') }}"> <!-- Auto redirect after 40s (backup) -->
+</head>
+
+<body>
+    <h1>Face Capture for Roll No: {{ roll_no }}</h1>
+    <p>Please look at the camera. Capturing 30 images...</p>
+
+    <div class="video-container">
+        <img src="{{ url_for('video_feed_capture', roll_no=roll_no) }}" width="640" height="480">
+    </div>
+
+    <br>
+    <p>Wait for the "DONE" message on the video, then click below.</p>
+    <a href="/"><button>Finish & Go Home</button></a>
+</body>
+
+</html>

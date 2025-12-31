@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add Student - SMARTO ATTEND</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Add New Student</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <form method="POST" action="/add_student">
+            <label for="roll_no">Roll Number:</label>
+            <input type="text" id="roll_no" name="roll_no" required>
+
+            <label for="name">Student Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <button type="submit">Add Student</button>
+        </form>
+        <br>
+        <a href="/"><button class="secondary">Back to Home</button></a>
+    </div>
+</body>
+
+</html>
