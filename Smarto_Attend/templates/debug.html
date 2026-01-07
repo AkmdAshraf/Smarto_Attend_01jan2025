@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Face Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .warning {
+            color: orange;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .action-btn {
+            background-color: #ffcccc;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 Face Recognition Debugger</h1>
+
+    <div class="section">
+        <h2>1. Check ID Mapping</h2>
+        <button onclick="checkIds()">Check ID Mapping</button>
+        <div id="id-results"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Test Recognition</h2>
+        <input type="text" id="testRollNo" placeholder="Enter Roll Number">
+        <button onclick="testRecognition()">Test Recognition</button>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. Quick Actions</h2>
+        <button onclick="retrainModel()">🔄 Retrain Model</button>
+        <button onclick="window.location.href='/'">🏠 Go Home</button>
+    </div>
+
+    <script>
+        async function checkIds() {
+            const resultsDiv = document.getElementById('id-results');
+            resultsDiv.innerHTML = "<p>Checking...</p>";
+
+            try {
+                const response = await fetch('/api/debug/check_ids');
+                const data = await response.json();
+
+                let html = `
+                <h3>ID Mapping Results:</h3>
+                <p>✅ Students in both: ${data.in_both.join(', ') || 'None'}</p>
+            `;
+
+                if (data.only_in_json.length > 0) {
+                    html += `<div class="warning">
+                    <h3>⚠️ Only in JSON (no photos):</h3>
+                    <ul>
+                        ${data.only_in_json.map(id => `
+                            <li>
+                                ${id} 
+                                <button class="action-btn" onclick="fixMismatch('delete_json', '${id}')">Delete from JSON</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>`;
+                }
+
+                if (data.only_in_dataset.length > 0) {
+                    html += `<div class="error">
+                    <h3>❌ Only in Dataset (no JSON entry):</h3>
+                     <ul>
+                        ${data.only_in_dataset.map(id => `
+                            <li>
+                                ${id} 
+                                <button class="action-btn" onclick="fixMismatch('delete_dataset', '${id}')">Delete Dataset</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>`;
+                }
+
+                if (data.only_in_json.length === 0 && data.only_in_dataset.length === 0) {
+                    html += '<p class="success">✅ All IDs match correctly!</p>';
+                }
+
+                resultsDiv.innerHTML = html;
+            } catch (e) {
+                resultsDiv.innerHTML = `<p class="error">Error: ${e.message}</p>`;
+            }
+        }
+
+        async function fixMismatch(action, rollNo) {
+            if (!confirm(`Are you sure you want to ${action} for ${rollNo}?`)) return;
+
+            try {
+                const response = await fetch(`/api/debug/fix_mismatch/${action}/${rollNo}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert(data.message);
+                    checkIds(); // Refresh
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        async function testRecognition() {
+            const rollNo = document.getElementById('testRollNo').value;
+            const resultsDiv = document.getElementById('test-results');
+
+            if (!rollNo) {
+                alert('Enter roll number');
+                return;
+            }
+
+            resultsDiv.innerHTML = "<p>Testing...</p>";
+
+            try {
+                const response = await fetch(`/api/debug/test_recognition/${rollNo}`);
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    resultsDiv.innerHTML = `<p class="error">${data.message}</p>`;
+                    return;
+                }
+
+                let html = `<h3>Recognition Test for ${rollNo}:</h3>`;
+                html += `<p>Accuracy on sample images: ${(data.accuracy * 100).toFixed(1)}%</p>`;
+                html += `<table><tr><th>Image</th><th>Predicted ID</th><th>Confidence</th><th>Match</th></tr>`;
+
+                data.results.forEach(result => {
+                    const matchClass = result.match ? 'success' : 'error';
+                    html += `
+                    <tr>
+                        <td>${result.image}</td>
+                        <td>${result.predicted_id}</td>
+                        <td>${result.confidence.toFixed(1)}</td>
+                        <td class="${matchClass}">${result.match ? '✅' : '❌'}</td>
+                    </tr>
+                `;
+                });
+
+                html += '</table>';
+                html += '<p><i>Note: Confidence < 70 is considered a match. Lower is better.</i></p>';
+                resultsDiv.innerHTML = html;
+            } catch (e) {
+                resultsDiv.innerHTML = `<p class="error">Error: ${e.message}</p>`;
+            }
+        }
+
+        async function retrainModel() {
+            if (!confirm("Start model training? This may take a moment.")) return;
+            window.location.href = '/train';
+        }
+    </script>
+</body>
+
+</html>

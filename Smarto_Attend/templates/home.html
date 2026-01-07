@@ -17,6 +17,35 @@
         <a href="/export"><button>Export Excel</button></a>
         <button onclick="window.close()">Exit</button>
     </div>
+
+    <!-- Phase 4: Developer Console -->
+    <div id="developer-console"
+        style="background-color: #1e1e1e; color: #00ff00; padding: 15px; margin-top: 30px; font-family: 'Courier New', monospace; height: 300px; overflow-y: scroll; border-radius: 5px; border: 1px solid #333;">
+        <h3 style="margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 5px;">Developer Console (Live Logs)
+        </h3>
+        <pre id="log-content" style="white-space: pre-wrap; word-wrap: break-word;">Waiting for logs...</pre>
+    </div>
+
+    <script>
+        function fetchLogs() {
+            fetch('/logs')
+                .then(response => response.json())
+                .then(data => {
+                    const logContent = document.getElementById('log-content');
+                    if (data.logs && data.logs.length > 0) {
+                        logContent.innerText = data.logs.join('');
+                        // Auto-scroll to bottom to see latest
+                        const consoleDiv = document.getElementById('developer-console');
+                        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                    }
+                })
+                .catch(err => console.error('Error fetching logs:', err));
+        }
+
+        // Poll every 5 seconds
+        fetchLogs();
+        setInterval(fetchLogs, 5000);
+    </script>
 </body>
 
 </html>

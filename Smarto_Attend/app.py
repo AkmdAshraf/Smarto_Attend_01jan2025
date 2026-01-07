@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from logger_config import antigravity_trace, track_runtime_value
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Required for flash messages
@@ -28,6 +29,7 @@ def save_students(data):
         json.dump(data, f, indent=4)
 
 @app.route("/")
+@antigravity_trace
 def home():
     return render_template("home.html")
 
@@ -96,6 +98,20 @@ def delete_student(roll_no):
 @app.route("/attendance")
 def attendance():
     return render_template("attendance.html")
+    
+@app.route('/logs')
+def get_logs():
+    """Phase 4: Return last 20 log lines"""
+    log_file = os.path.join(BASE_DIR, 'app.log')
+    if not os.path.exists(log_file):
+        return {"logs": ["Log file not found."]}
+    
+    try:
+        with open(log_file, 'r') as f:
+            lines = f.readlines()
+        return {"logs": lines[-20:]}
+    except Exception as e:
+        return {"logs": [f"Error reading logs: {str(e)}"]}
 
 
 
@@ -110,14 +126,29 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 def start_capture(roll_no):
     return render_template("capture.html", roll_no=roll_no)
 
+@antigravity_trace
 def preprocess_face(face_img):
     """
     Standardize face image:
     1. Resize to fixed 200x200
-    2. Apply Histogram Equalization (Lighting invariant)
+    2. Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+    3. Apply Gaussian Blur to reduce noise
     """
-    face_img = cv2.resize(face_img, (200, 200))
-    face_img = cv2.equalizeHist(face_img)
+    try:
+        face_img = cv2.resize(face_img, (200, 200))
+        
+        # CLAHE
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+        face_img = clahe.apply(face_img)
+        
+        # Gaussian Blur (light)
+        face_img = cv2.GaussianBlur(face_img, (3, 3), 0)
+    except Exception as e:
+        print(f"Error in preprocessing: {e}")
+        # Fallback to simple resize if something fails
+        if face_img.shape[0] != 200 or face_img.shape[1] != 200:
+             face_img = cv2.resize(face_img, (200, 200))
+             
     return face_img
 
 def generate_capture_frames(roll_no):
@@ -129,7 +160,7 @@ def generate_capture_frames(roll_no):
         os.makedirs(student_folder, exist_ok=True)
         
     count = 0
-    max_images = 30
+    max_images = 50 # Increased from 30
     
     while True:
         success, frame = camera.read()
@@ -139,13 +170,35 @@ def generate_capture_frames(roll_no):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
         
+        # Instructions text
+        instruction = "Look Straight"
+        if 10 < count <= 20: instruction = "Turn Head LEFT"
+        elif 20 < count <= 30: instruction = "Turn Head RIGHT"
+        elif 30 < count <= 40: instruction = "Tilt Head UP"
+        elif 40 < count <= 50: instruction = "Tilt Head DOWN"
+        
+        cv2.putText(frame, instruction, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
+        
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
             
             # Save face only if we haven't reached the limit
             if count < max_images:
+                # Blur check
+                roi_gray = gray[y:y+h, x:x+w]
+                variance = cv2.Laplacian(roi_gray, cv2.CV_64F).var()
+                
+                if variance < 50: # Threshold for blur
+                    cv2.putText(frame, "Too Blurry!", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                    continue
+                
+                # Min size check
+                if w < 100 or h < 100:
+                    cv2.putText(frame, "Too Far!", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                    continue
+                
                 count += 1
-                face_img = gray[y:y+h, x:x+w]
+                face_img = roi_gray
                 
                 # Preprocess before saving
                 face_img = preprocess_face(face_img)
@@ -154,11 +207,11 @@ def generate_capture_frames(roll_no):
                 cv2.imwrite(img_path, face_img)
         
         # Add text to frame
-        cv2.putText(frame, f"Captured: {count}/{max_images}", (10, 30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+        cv2.putText(frame, f"Captured: {count}/{max_images}", (10, 450), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
         
         if count >= max_images:
-            cv2.putText(frame, "DONE! You can go back.", (10, 60), 
+            cv2.putText(frame, "DONE! You can go back.", (10, 400), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
             
         ret, buffer = cv2.imencode('.jpg', frame)
@@ -231,8 +284,17 @@ def train_model():
         flash("No training data found. Add students and capture photos first.", "error")
         return redirect(url_for("home"))
         
-    # LBPH Recognizer
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    # LBPH Recognizer with tuned parameters
+    # radius=1, neighbors=8, grid_x=8, grid_y=8
+    recognizer = cv2.face.LBPHFaceRecognizer_create(radius=1, neighbors=8, grid_x=8, grid_y=8)
+    
+    # Shuffle data
+    # Create zipper, shuffle, unzip
+    combined = list(zip(faces, ids))
+    import random
+    random.shuffle(combined)
+    faces[:], ids[:] = zip(*combined)
+    
     recognizer.train(faces, np.array(ids))
     
     recognizer.save(MODEL_FILE) # Save model
@@ -277,8 +339,12 @@ def generate_attendance_frames():
     camera = cv2.VideoCapture(0)
     
     # Virtual Line X-Coordinate
-    # Width is usually 640
     LINE_X = 320 
+    
+    from collections import deque
+    # History buffer for 5-frame confirmation
+    # Structure: {roll_no: deque([True, True, False...], maxlen=5)}
+    verification_buffer = {} 
     
     while True:
         success, frame = camera.read()
@@ -290,7 +356,7 @@ def generate_attendance_frames():
         
         # Draw Line
         cv2.line(frame, (LINE_X, 0), (LINE_X, 480), (0, 255, 255), 2)
-        cv2.putText(frame, "LEFT (EXIT) <--- | ---> RIGHT (ENTRY)", (10, 20), 
+        cv2.putText(frame, "EXIT <--- | ---> ENTRY", (10, 20), 
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
         
         current_time = time.time()
@@ -298,55 +364,68 @@ def generate_attendance_frames():
         for (x, y, w, h) in faces:
             # ROI
             roi_gray = gray[y:y+h, x:x+w]
-            
-            # Preprocess BEFORE Prediction (CRITICAL)
             roi_gray = preprocess_face(roi_gray)
             
             # Predict
             try:
                 id_, confidence = recognizer.predict(roi_gray)
                 
-                # Confidence check 
-                # LBPH: 0 is perfect match.
-                # < 50 is very confident.
-                # < 80 is acceptable.
-                # > 80 is questionable or unknown.
+                # Confidence Threshold
+                # < 60 is strict match for our tuned model
+                MATCH_THRESHOLD = 60
                 
-                if confidence < 80: 
-                    name = students.get(str(id_), {}).get("name", "Unknown")
+                display_name = "Unknown"
+                display_color = (0, 0, 255)
+                
+                if confidence < MATCH_THRESHOLD:
                     roll_str = str(id_)
                     
-                    # Tracking Logic
-                    cx = x + w // 2
+                    # Add to buffer
+                    if roll_str not in verification_buffer:
+                        verification_buffer[roll_str] = deque(maxlen=5)
+                    verification_buffer[roll_str].append(True)
                     
-                    if roll_str not in trackers:
-                        trackers[roll_str] = [cx, cx, current_time]
-                    else:
-                        old_x = trackers[roll_str][0] # Historical
+                    # Check if confirmed (last 5 frames match)
+                    if len(verification_buffer[roll_str]) == 5 and all(verification_buffer[roll_str]):
+                        # Confirmed Identity
+                        name = students.get(roll_str, {}).get("name", "Unknown")
+                        display_name = f"{name} ({int(confidence)})"
+                        display_color = (0, 255, 0)
                         
-                        # Update current
-                        trackers[roll_str][1] = cx
+                        # Tracking & Attendance Logic
+                        cx = x + w // 2
                         
-                        # Crossing Logic
-                        if old_x < LINE_X and cx >= LINE_X:
-                            # Entry
-                            print(f"{name} Entered!")
-                            log_attendance(roll_str, "entry")
-                            cv2.putText(frame, "ENTRY MARKED", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                        if roll_str not in trackers:
+                            trackers[roll_str] = [cx, cx, current_time]
+                        else:
+                            old_x = trackers[roll_str][0] # Historical
                             
-                        elif old_x > LINE_X and cx <= LINE_X:
-                            # Exit
-                            print(f"{name} Exited!")
-                            log_attendance(roll_str, "exit")
-                            cv2.putText(frame, "EXIT MARKED", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-                        
-                        # Update historical if needed (to keep track of flow)
-                        trackers[roll_str][0] = cx
-                        
-                    cv2.putText(frame, f"{name} ({int(confidence)})", (x, y+h+20), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                            # Update current
+                            trackers[roll_str][1] = cx
+                            
+                            # Crossing Logic
+                            if old_x < LINE_X and cx >= LINE_X:
+                                # Entry
+                                print(f"{name} Entered!")
+                                log_attendance(roll_str, "entry")
+                                cv2.putText(frame, "ENTRY MARKED", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                                
+                            elif old_x > LINE_X and cx <= LINE_X:
+                                # Exit
+                                print(f"{name} Exited!")
+                                log_attendance(roll_str, "exit")
+                                cv2.putText(frame, "EXIT MARKED", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+                            
+                            # Strict update of old_x to prevent jitter logic
+                            trackers[roll_str][0] = cx
                 else:
-                    cv2.putText(frame, f"Unknown ({int(confidence)})", (x, y+h+20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                    # Clear buffer if recognition fails effectively
+                    # But we usually don't want to clear immediately on one bad frame (flicker)
+                    # However, if confidence is high (bad match), we should treat as unknown
+                    pass
+
+                cv2.putText(frame, display_name, (x, y+h+20), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, display_color, 2)
                     
             except Exception as e:
                 pass
@@ -454,5 +533,101 @@ def export():
     return send_file(os.path.join(BASE_DIR, output_file), as_attachment=True)
 
 
+
+# --- Phase 9: Debugging Tools ---
+@app.route("/debug")
+def debug_page():
+    """Debug dashboard"""
+    return render_template("debug.html")
+
+@app.route("/api/debug/check_ids")
+def api_check_ids():
+    """API endpoint to check ID mapping"""
+    students = load_students()
+    dataset_ids = set()
+    
+    if os.path.exists(DATASET_DIR):
+        for item in os.listdir(DATASET_DIR):
+            item_path = os.path.join(DATASET_DIR, item)
+            if os.path.isdir(item_path):
+                dataset_ids.add(item)
+    
+    json_ids = set(students.keys())
+    
+    return {
+        "students_in_json": sorted(json_ids),
+        "students_in_dataset": sorted(dataset_ids),
+        "only_in_json": sorted(json_ids - dataset_ids),
+        "only_in_dataset": sorted(dataset_ids - json_ids),
+        "in_both": sorted(json_ids.intersection(dataset_ids))
+    }
+
+@app.route("/api/debug/fix_mismatch/<action>/<roll_no>")
+def api_fix_mismatch(action, roll_no):
+    """Fix ID mismatches"""
+    if action == "delete_json":
+        # Delete from students.json
+        students = load_students()
+        if roll_no in students:
+            del students[roll_no]
+            save_students(students)
+            return {"status": "success", "message": f"Deleted {roll_no} from students.json"}
+    
+    elif action == "delete_dataset":
+        # Delete from dataset
+        folder_path = os.path.join(DATASET_DIR, roll_no)
+        if os.path.exists(folder_path):
+            shutil.rmtree(folder_path, ignore_errors=True)
+            return {"status": "success", "message": f"Deleted {roll_no} from dataset"}
+    
+    return {"status": "error", "message": "Invalid action or roll number"}
+
+@app.route("/api/debug/test_recognition/<roll_no>")
+def api_test_recognition(roll_no):
+    """Test recognition for specific student"""
+    if not os.path.exists(MODEL_FILE):
+        return {"status": "error", "message": "Model not trained"}
+    
+    recognizer = cv2.face.LBPHFaceRecognizer_create()
+    recognizer.read(MODEL_FILE)
+    
+    # Test with student's images
+    student_folder = os.path.join(DATASET_DIR, str(roll_no))
+    if not os.path.exists(student_folder):
+        return {"status": "error", "message": "Student folder not found"}
+    
+    results = []
+    images = [f for f in os.listdir(student_folder) if f.endswith('.jpg')][:5]  # Test 5 images
+    
+    for img_name in images:
+        img_path = os.path.join(student_folder, img_name)
+        img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+        
+        if img is None:
+            continue
+            
+        # Preprocess
+        img = preprocess_face(img)
+        
+        # Predict
+        id_, confidence = recognizer.predict(img)
+        
+        results.append({
+            "image": img_name,
+            "predicted_id": int(id_),
+            "expected_id": int(roll_no),
+            "confidence": float(confidence),
+            "match": int(id_) == int(roll_no) and confidence < 70
+        })
+    
+    return {
+        "status": "success",
+        "roll_no": roll_no,
+        "results": results,
+        "accuracy": sum(1 for r in results if r["match"]) / len(results) if results else 0
+    }
+
+
 if __name__ == "__main__":
+
     app.run(debug=True)
