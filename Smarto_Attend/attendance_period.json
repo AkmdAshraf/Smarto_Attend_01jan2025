@@ -1,0 +1,19 @@
+{
+    "2026-01-10": {
+        "101": {
+            "periods": {
+                "999": {
+                    "entry": "23:52:17",
+                    "exit": "00:37:17",
+                    "duration": "0:45:00",
+                    "present": true,
+                    "attendance_percentage": 75.0,
+                    "counted": true
+                }
+            },
+            "total_present": 1,
+            "total_absent": 0,
+            "total_duration": "00:45:00"
+        }
+    }
+}

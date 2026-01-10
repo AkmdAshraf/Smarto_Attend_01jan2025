@@ -1,0 +1,97 @@
+[
+    {
+        "period_id": 1,
+        "period_name": "Mathematics",
+        "start_time": "09:00:00",
+        "end_time": "10:00:00",
+        "duration_minutes": 60,
+        "subject": "Mathematics",
+        "teacher": "Mr. Sharma",
+        "is_break": false,
+        "break_duration": 0,
+        "is_active": true
+    },
+    {
+        "period_id": 2,
+        "period_name": "BREAK",
+        "start_time": "10:00:00",
+        "end_time": "10:10:00",
+        "duration_minutes": 10,
+        "subject": "BREAK",
+        "teacher": "",
+        "is_break": true,
+        "break_duration": 10,
+        "is_active": true
+    },
+    {
+        "period_id": 3,
+        "period_name": "Physics",
+        "start_time": "10:10:00",
+        "end_time": "11:10:00",
+        "duration_minutes": 60,
+        "subject": "Physics",
+        "teacher": "Ms. Patel",
+        "is_break": false,
+        "break_duration": 0,
+        "is_active": true
+    },
+    {
+        "period_id": 4,
+        "period_name": "Chemistry",
+        "start_time": "11:10:00",
+        "end_time": "12:10:00",
+        "duration_minutes": 60,
+        "subject": "Chemistry",
+        "teacher": "Dr. Kumar",
+        "is_break": false,
+        "break_duration": 0,
+        "is_active": true
+    },
+    {
+        "period_id": 5,
+        "period_name": "LUNCH BREAK",
+        "start_time": "12:10:00",
+        "end_time": "13:00:00",
+        "duration_minutes": 50,
+        "subject": "BREAK",
+        "teacher": "",
+        "is_break": true,
+        "break_duration": 50,
+        "is_active": true
+    },
+    {
+        "period_id": 6,
+        "period_name": "Computer Science",
+        "start_time": "13:00:00",
+        "end_time": "14:00:00",
+        "duration_minutes": 60,
+        "subject": "Computer Science",
+        "teacher": "Mrs. Gupta",
+        "is_break": false,
+        "break_duration": 0,
+        "is_active": true
+    },
+    {
+        "period_id": 7,
+        "period_name": "English",
+        "start_time": "14:00:00",
+        "end_time": "15:00:00",
+        "duration_minutes": 60,
+        "subject": "English",
+        "teacher": "Ms. Roy",
+        "is_break": false,
+        "break_duration": 0,
+        "is_active": true
+    },
+    {
+        "period_id": 999,
+        "period_name": "Test Period",
+        "start_time": "23:22:17",
+        "end_time": "00:22:17",
+        "duration_minutes": 60,
+        "subject": "Testing",
+        "teacher": "Tester",
+        "is_break": false,
+        "is_active": true
+    }
+]

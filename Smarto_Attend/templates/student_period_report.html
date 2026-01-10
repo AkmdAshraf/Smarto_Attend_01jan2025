@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Student Report: {{ student_name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-user-clock me-2"></i>Student Period Report</h2>
+        <h4 class="text-info">{{ student_name }} ({{ roll_no }})</h4>
+        <p class="text-muted">Date: {{ date }}</p>
+    </div>
+    <div class="col-md-4 text-end align-self-center">
+        <a href="{{ url_for('period_reports', date=date) }}" class="btn btn-outline-light">
+            <i class="fas fa-arrow-left me-1"></i> Back to Daily Report
+        </a>
+    </div>
+</div>
+
+<div class="card bg-dark text-light border-secondary">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Time Slot</th>
+                        <th>Period</th>
+                        <th>Subject / Teacher</th>
+                        <th>Entry Time</th>
+                        <th>Exit Time</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th>Completion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in period_details %}
+                    <tr class="{{ 'table-secondary text-muted' if p.is_break else '' }}">
+                        <td>{{ p.start_time[:5] }} - {{ p.end_time[:5] }}</td>
+                        <td>
+                            <strong>{{ p.period_name }}</strong>
+                        </td>
+                        <td>
+                            {% if p.is_break %}
+                            <span class="badge bg-secondary">Break</span>
+                            {% else %}
+                            <div>{{ p.subject }}</div>
+                            <small class="text-muted">{{ p.teacher }}</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.entry != '-' %}
+                            <span class="text-success">{{ p.entry }}</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.exit != '-' %}
+                            <span class="text-warning">{{ p.exit }}</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ p.duration }}</td>
+                        <td>
+                            {% if p.is_break %}
+                            <span class="badge bg-secondary">N/A</span>
+                            {% elif p.present %}
+                            <span class="badge bg-success">Present</span>
+                            {% else %}
+                            <span class="badge bg-danger">Absent</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not p.is_break %}
+                            <div class="progress" style="height: 5px; width: 100px;">
+                                <div class="progress-bar bg-info" role="progressbar"
+                                    style="width: {{ p.attendance_percentage }}%"></div>
+                            </div>
+                            <small class="text-muted">{{ p.attendance_percentage }}%</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No period data available for this schedule.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-dark text-light border-secondary">
+            <div class="card-header border-secondary">
+                <h6 class="mb-0">Daily Summary</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush bg-dark text-light">
+                    <li
+                        class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center border-secondary">
+                        Total Present Periods
+                        <span class="badge bg-success rounded-pill">{{ student_data.total_present }}</span>
+                    </li>
+                    <li
+                        class="list-group-item bg-dark text-light d-flex justify-content-between align-items-center border-secondary">
+                        Total Duration
+                        <span class="badge bg-info rounded-pill">{{ student_data.total_duration }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

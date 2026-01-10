@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Period{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card bg-dark text-light border-secondary">
+            <div class="card-header border-secondary">
+                <h4 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Period</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="period_name" class="form-label">Period Name</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="period_name"
+                            name="period_name" required placeholder="e.g. Mathematics, Morning Break">
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="start_time" class="form-label">Start Time</label>
+                            <input type="time" class="form-control bg-dark text-light border-secondary" id="start_time"
+                                name="start_time" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="end_time" class="form-label">End Time</label>
+                            <input type="time" class="form-control bg-dark text-light border-secondary" id="end_time"
+                                name="end_time" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="subject"
+                                name="subject" required>
+                            <div class="form-text text-muted">For breaks, enter 'BREAK'</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="teacher" class="form-label">Teacher Name</label>
+                            <input type="text" class="form-control bg-dark text-light border-secondary" id="teacher"
+                                name="teacher">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_break" name="is_break">
+                        <label class="form-check-label" for="is_break">This is a Break / Recess period</label>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('manage_periods') }}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save
+                            Period</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-fill subject/teacher if Break is checked
+    document.getElementById('is_break').addEventListener('change', function () {
+        if (this.checked) {
+            document.getElementById('subject').value = 'BREAK';
+            document.getElementById('teacher').value = '';
+            document.getElementById('teacher').disabled = true;
+        } else {
+            if (document.getElementById('subject').value === 'BREAK') {
+                document.getElementById('subject').value = '';
+            }
+            document.getElementById('teacher').disabled = false;
+        }
+    });
+</script>
+{% endblock %}

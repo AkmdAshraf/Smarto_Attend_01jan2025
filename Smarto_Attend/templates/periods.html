@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Periods{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="fas fa-clock me-2"></i>Manage Periods</h2>
+        <p class="text-muted">Configure daily schedule and class timings</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('add_period') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Add New Period
+        </a>
+    </div>
+</div>
+
+<div class="card bg-dark text-light border-secondary">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Period Name</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Subject / Teacher</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for period in periods %}
+                    <tr class="{{ 'table-secondary text-muted' if not period.is_active else '' }}">
+                        <td>{{ period.period_id }}</td>
+                        <td>
+                            <strong>{{ period.period_name }}</strong>
+                        </td>
+                        <td>
+                            <i class="far fa-clock me-1 text-info"></i>
+                            {{ period.start_time[:5] }} - {{ period.end_time[:5] }}
+                        </td>
+                        <td>{{ period.duration_minutes }} mins</td>
+                        <td>
+                            {% if period.is_break %}
+                            <span class="badge bg-secondary">Break Time</span>
+                            {% else %}
+                            <div class="fw-bold">{{ period.subject }}</div>
+                            <div class="small text-muted">{{ period.teacher }}</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if period.is_break %}
+                            <span class="badge bg-warning text-dark">BREAK</span>
+                            {% else %}
+                            <span class="badge bg-info text-dark">CLASS</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if period.is_active %}
+                            <span class="badge bg-success">Active</span>
+                            {% else %}
+                            <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('edit_period', period_id=period.period_id) }}"
+                                    class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if period.is_active %}
+                                <a href="{{ url_for('delete_period', period_id=period.period_id) }}"
+                                    class="btn btn-sm btn-outline-danger" title="Deactivate"
+                                    onclick="return confirm('Are you sure you want to deactivate this period?')">
+                                    <i class="fas fa-ban"></i>
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('activate_period', period_id=period.period_id) }}"
+                                    class="btn btn-sm btn-outline-success" title="Activate">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            <i class="fas fa-calendar-times fa-3x mb-3 d-block"></i>
+                            No periods configured yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
