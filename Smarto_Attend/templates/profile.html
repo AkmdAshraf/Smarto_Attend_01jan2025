@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Smarto Attend{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>User Profile</h2>
+
+    <div style="text-align: left; background: #2b2b2b; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Role:</strong> <span style="text-transform: capitalize;">{{ user.role }}</span></p>
+        <p><strong>Last Login:</strong> {{ user.last_login or 'Never' }}</p>
+        <p><strong>Created At:</strong> {{ user.created_at }}</p>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('change_password') }}"><button>Change Password</button></a>
+    </div>
+</div>
+{% endblock %}

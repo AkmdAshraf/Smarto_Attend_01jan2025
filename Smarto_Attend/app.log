@@ -1054,3 +1054,215 @@
 2026-01-05 21:00:37,428 - logger_config.py:157 - INFO - [preprocess_face] [Status: OUT] [Duration: 1.41ms] [Payload: RuntimeValues: {}]
 2026-01-05 21:00:37,537 - logger_config.py:139 - INFO - [preprocess_face] [Status: IN] [Duration: 0ms] [Payload: Args: ['Array(shape=(98, 98))'], Kwargs: {}]
 2026-01-05 21:00:37,543 - logger_config.py:157 - INFO - [preprocess_face] [Status: OUT] [Duration: 2.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:12:59,671 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:12:59,672 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:12:59,919 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 245.77ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 95, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:12:59,925 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 254.30ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 289, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 95, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:12:59,951 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:12:59,976 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 23.00ms] [Payload: Exception: 'csrf_token' is undefined]
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 348, in login
+    return render_template('login.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\base.html", line 39, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 9, in block 'content'
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-01-10 23:13:00,027 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:00,036 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 1.00ms] [Payload: Exception: 'csrf_token' is undefined]
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 348, in login
+    return render_template('login.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\base.html", line 39, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 9, in block 'content'
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-01-10 23:13:00,083 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:00,087 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:13:00,092 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:00,095 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 0.99ms] [Payload: Exception: 'csrf_token' is undefined]
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 348, in login
+    return render_template('login.html')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\base.html", line 39, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\templates\login.html", line 9, in block 'content'
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ADMIN\AppData\Local\Programs\Python\Python311\Lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-01-10 23:13:50,986 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:50,994 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:51,527 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 527.47ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:13:51,538 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 545.92ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 293, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:13:51,611 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:51,667 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 53.48ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:13:51,684 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:51,690 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:13:51,702 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:51,720 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:52,205 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 458.76ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:13:52,222 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 499.93ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 293, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:13:52,260 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:52,266 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 1.04ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:13:52,274 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:13:52,292 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 2.76ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:25,862 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:25,876 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 13.02ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:50,799 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:50,815 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 14.91ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:50,817 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:50,819 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:51,024 - logger_config.py:139 - INFO - [save_users] [Status: IN] [Duration: 0ms] [Payload: Args: [{'admin': {'password_hash': 'scrypt:32768:8:1$iVEpnEjwJZ7Hl3sx$bd0347702452c50c9bfe50dd25d424b0b4a41fd5b77483376e75625e3b170496220b8340baedeaa44264b5a6c309e2c88dae0a0533935b1aee42d76f637399d7', 'role': 'admin', 'email': 'admin@school.edu', 'created_at': '2026-01-10T23:19:51.024365', 'last_...]
+2026-01-10 23:19:51,027 - logger_config.py:157 - INFO - [save_users] [Status: OUT] [Duration: 0.54ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:51,028 - logger_config.py:157 - INFO - [load_users] [Status: OUT] [Duration: 207.83ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:51,229 - logger_config.py:139 - INFO - [save_users] [Status: IN] [Duration: 0ms] [Payload: Args: [{'admin': {'password_hash': 'scrypt:32768:8:1$iVEpnEjwJZ7Hl3sx$bd0347702452c50c9bfe50dd25d424b0b4a41fd5b77483376e75625e3b170496220b8340baedeaa44264b5a6c309e2c88dae0a0533935b1aee42d76f637399d7', 'role': 'admin', 'email': 'admin@school.edu', 'created_at': '2026-01-10T23:19:51.024365', 'last_...]
+2026-01-10 23:19:51,232 - logger_config.py:157 - INFO - [save_users] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:51,233 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 415.10ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:51,239 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:51,240 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:19:51,250 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 7.35ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:19:51,251 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 10.34ms] [Payload: RuntimeValues: {}]

@@ -1,19 +1,74 @@
 import os
 import json
 import shutil
-from flask import Flask, render_template, request, redirect, url_for, flash, Response
+import time
+import uuid
+import re
+import datetime
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_talisman import Talisman
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import bleach
+from flask_wtf.csrf import CSRFProtect
 from logger_config import antigravity_trace, track_runtime_value
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Required for flash messages
+csrf = CSRFProtect(app)
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=30)
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Constants
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STUDENTS_FILE = os.path.join(BASE_DIR, 'students.json')
+USERS_FILE = os.path.join(BASE_DIR, 'users.json')
 DATASET_DIR = os.path.join(BASE_DIR, 'dataset')
+SESSION_TIMEOUT = 1800  # 30 minutes in seconds
+MAX_FAILED_ATTEMPTS = 5
+LOCKOUT_DURATION = 900  # 15 minutes in seconds
 
 # Ensure dataset directory exists
 os.makedirs(DATASET_DIR, exist_ok=True)
+
+# ==================== SECURITY CONFIGURATION ====================
+# Initialize Talisman for security headers
+csp = {
+    'default-src': '\'self\'',
+    'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://cdn.jsdelivr.net'],
+    'script-src': ['\'self\'', '\'unsafe-inline\'', 'https://cdn.jsdelivr.net'],
+    'img-src': ['\'self\'', 'data:', 'blob:'],
+    'font-src': ['\'self\'', 'https://cdn.jsdelivr.net']
+}
+
+talisman = Talisman(
+    app,
+    content_security_policy=csp,
+    content_security_policy_nonce_in=['script-src'],
+    force_https=False,  # Set to True in production
+    strict_transport_security=True,
+    strict_transport_security_max_age=31536000,
+    frame_options='DENY',
+    referrer_policy='strict-origin-when-cross-origin',
+    feature_policy={
+        'geolocation': '\'none\'',
+        'camera': '\'self\'',  # Allow camera for face capture
+        'microphone': '\'none\''
+    }
+)
+
+# Initialize rate limiter
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["1000 per hour", "100 per minute"],
+    storage_uri="memory://",
+    strategy="fixed-window"
+)
 
 def load_students():
     if not os.path.exists(STUDENTS_FILE):
@@ -28,12 +83,581 @@ def save_students(data):
     with open(STUDENTS_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
+# ==================== USER MANAGEMENT FUNCTIONS ====================
+@antigravity_trace
+def load_users():
+    """Load users from JSON file with anti-gravity tracing"""
+    if not os.path.exists(USERS_FILE):
+        # Create default admin user
+        default_users = {
+            "admin": {
+                "password_hash": generate_password_hash("Admin@123", method='scrypt'),
+                "role": "admin",
+                "email": "admin@school.edu",
+                "created_at": datetime.datetime.now().isoformat(),
+                "last_login": None,
+                "failed_attempts": 0,
+                "locked_until": None,
+                "is_active": True,
+                "last_password_change": datetime.datetime.now().isoformat()
+            }
+        }
+        save_users(default_users)
+        return default_users
+    try:
+        with open(USERS_FILE, 'r') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, IOError) as e:
+        print(f"Error loading users: {e}")
+        return {}
+
+@antigravity_trace
+def save_users(users_data):
+    """Save users to JSON file with anti-gravity tracing"""
+    try:
+        with open(USERS_FILE, 'w') as f:
+            json.dump(users_data, f, indent=4, default=str)
+    except IOError as e:
+        print(f"Error saving users: {e}")
+        raise
+
+@antigravity_trace
+def create_user(username, password, email, role="viewer"):
+    """Create new user with validation and anti-gravity tracing"""
+    users = load_users()
+    
+    if username in users:
+        return False, "Username already exists"
+    
+    # Validate password strength
+    is_valid, msg = validate_password(password)
+    if not is_valid:
+        return False, msg
+    
+    # Hash password with performance tracking
+    def hash_password(pwd):
+        return generate_password_hash(pwd, method='scrypt')
+    
+    password_hash = hash_password(password)
+    
+    users[username] = {
+        "password_hash": password_hash,
+        "role": role,
+        "email": email,
+        "created_at": datetime.datetime.now().isoformat(),
+        "last_login": None,
+        "failed_attempts": 0,
+        "locked_until": None,
+        "is_active": True,
+        "last_password_change": datetime.datetime.now().isoformat()
+    }
+    
+    save_users(users)
+    return True, "User created successfully"
+
+@antigravity_trace
+def validate_password(password):
+    """Validate password strength"""
+    if len(password) < 12:
+        return False, "Password must be at least 12 characters long"
+    
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_special = any(not c.isalnum() for c in password)
+    
+    if not (has_upper and has_lower and has_digit and has_special):
+        return False, "Password must contain uppercase, lowercase, digit, and special character"
+    
+    return True, "Password is valid"
+
+# ==================== AUTHENTICATION DECORATORS ====================
+def login_required(f):
+    """Decorator to require login for routes"""
+    @wraps(f)
+    @antigravity_trace
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("Please login to access this page", "error")
+            return redirect(url_for('login', next=request.url))
+        
+        # Check session timeout
+        last_activity = session.get('last_activity')
+        if last_activity:
+            try:
+                last_activity_time = datetime.datetime.fromisoformat(last_activity)
+                if datetime.datetime.now() - last_activity_time > datetime.timedelta(seconds=SESSION_TIMEOUT):
+                    flash("Session expired. Please login again.", "error")
+                    session.clear()
+                    return redirect(url_for('login'))
+            except ValueError:
+                session.clear()
+                return redirect(url_for('login'))
+        
+        # Update last activity
+        session['last_activity'] = datetime.datetime.now().isoformat()
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+def role_required(*roles):
+    """Decorator to require specific role(s)"""
+    def decorator(f):
+        @wraps(f)
+        @antigravity_trace
+        def decorated_function(*args, **kwargs):
+            if 'user_id' not in session:
+                flash("Please login to access this page", "error")
+                return redirect(url_for('login', next=request.url))
+            
+            user_role = session.get('user_role')
+            if user_role not in roles and user_role != 'admin':
+                flash("You don't have permission to access this page", "error")
+                return redirect(url_for('dashboard'))
+            
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+# ==================== SECURITY DECORATORS & HELPERS ====================
+def validate_input(*validators):
+    """Decorator to validate and sanitize input"""
+    def decorator(f):
+        @wraps(f)
+        @antigravity_trace
+        def decorated_function(*args, **kwargs):
+            if request.method in ['POST', 'PUT', 'PATCH']:
+                for field, validator in validators:
+                    if request.is_json:
+                        value = request.json.get(field)
+                    else:
+                        value = request.form.get(field)
+                        
+                    if value:
+                        is_valid, message = validator(value)
+                        if not is_valid:
+                            flash(f"Invalid input for {field}: {message}", "error")
+                            return redirect(request.referrer or url_for('home'))
+            
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+def sanitize_input(data):
+    """Sanitize input data to prevent XSS"""
+    if isinstance(data, str):
+        # Allow basic HTML tags for rich text if needed
+        allowed_tags = ['b', 'i', 'u', 'em', 'strong', 'p', 'br']
+        return bleach.clean(data, tags=allowed_tags, strip=True)
+    elif isinstance(data, dict):
+        return {k: sanitize_input(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_input(item) for item in data]
+    return data
+    
+@antigravity_trace
+def validate_username(username):
+    """Validate username format"""
+    if not 3 <= len(username) <= 50:
+        return False, "Username must be between 3 and 50 characters"
+    
+    if not re.match(r'^[a-zA-Z0-9_\-\.]+$', username):
+        return False, "Username can only contain letters, numbers, dots, hyphens and underscores"
+    
+    return True, "Valid username"
+
+@antigravity_trace
+def validate_email(email):
+    """Validate email format"""
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(pattern, email):
+        return False, "Invalid email format"
+    return True, "Valid email"
+
+# ==================== AUTHENTICATION ROUTES ====================
+@app.route("/login", methods=["GET", "POST"])
+@antigravity_trace
+def login():
+    """Login route with anti-gravity tracing"""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        remember_me = request.form.get('remember_me') == 'on'
+        
+        def load_users_wrapper():
+            return load_users()
+        
+        users = load_users_wrapper()
+        
+        if username not in users:
+            flash("Invalid username or password", "error")
+            return render_template('login.html')
+        
+        user = users[username]
+        
+        if user.get('locked_until'):
+            locked_until = datetime.datetime.fromisoformat(user['locked_until'])
+            if datetime.datetime.now() < locked_until:
+                remaining = (locked_until - datetime.datetime.now()).seconds // 60
+                flash(f"Account locked. Try again in {remaining} minutes", "error")
+                return render_template('login.html')
+            else:
+                user['locked_until'] = None
+                user['failed_attempts'] = 0
+        
+        if not user.get('is_active', True):
+            flash("Account is deactivated. Contact administrator.", "error")
+            return render_template('login.html')
+        
+        def verify_password(pwd_hash, pwd):
+            return check_password_hash(pwd_hash, pwd)
+        
+        if verify_password(user['password_hash'], password):
+            session['user_id'] = username
+            session['user_role'] = user['role']
+            session['last_activity'] = datetime.datetime.now().isoformat()
+            
+            user['last_login'] = datetime.datetime.now().isoformat()
+            user['failed_attempts'] = 0
+            user['locked_until'] = None
+            
+            if remember_me:
+                session.permanent = True
+            else:
+                session.permanent = False
+            
+            save_users(users)
+            
+            flash(f"Welcome back, {username}!", "success")
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('dashboard'))
+        else:
+            user['failed_attempts'] = user.get('failed_attempts', 0) + 1
+            
+            if user['failed_attempts'] >= MAX_FAILED_ATTEMPTS:
+                lock_until = datetime.datetime.now() + datetime.timedelta(seconds=LOCKOUT_DURATION)
+                user['locked_until'] = lock_until.isoformat()
+                flash(f"Account locked for {LOCKOUT_DURATION//60} minutes due to too many failed attempts", "error")
+            else:
+                remaining = MAX_FAILED_ATTEMPTS - user['failed_attempts']
+                flash(f"Invalid password. {remaining} attempts remaining", "error")
+            
+            save_users(users)
+    
+    return render_template('login.html')
+
+@app.route("/logout")
+@antigravity_trace
+def logout():
+    """Logout route with anti-gravity tracing"""
+    username = session.get('user_id', 'Unknown')
+    session.clear()
+    flash(f"Goodbye, {username}! You have been logged out.", "success")
+    return redirect(url_for('login'))
+
+@app.route("/register", methods=["GET", "POST"])
+@antigravity_trace
+def register():
+    """User registration route with anti-gravity tracing"""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if not username or not email or not password:
+            flash("All fields are required", "error")
+            return render_template('register.html')
+        
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
+            return render_template('register.html')
+        
+        success, message = create_user(username, password, email, role="viewer")
+        
+        if success:
+            flash(message, "success")
+            return redirect(url_for('login'))
+        else:
+            flash(message, "error")
+    
+    return render_template('register.html')
+
+@app.route("/forgot_password", methods=["GET", "POST"])
+@antigravity_trace
+def forgot_password():
+    """Forgot password route with anti-gravity tracing"""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        users = load_users()
+        user_found = None
+        for username, user_data in users.items():
+            if user_data.get('email') == email:
+                user_found = username
+                break
+        
+        if user_found:
+            token = str(uuid.uuid4())
+            users[user_found]['reset_token'] = token
+            users[user_found]['reset_token_expiry'] = (datetime.datetime.now() + datetime.timedelta(hours=1)).isoformat()
+            save_users(users)
+            
+            reset_url = url_for('reset_password', token=token, _external=True)
+            flash(f"Password reset link has been generated. In production, this would be emailed.", "info")
+            flash(f"Reset URL: {reset_url}", "info")
+        else:
+            flash("If an account exists with that email, a reset link will be sent.", "info")
+        
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+@antigravity_trace
+def reset_password(token):
+    """Reset password route with anti-gravity tracing"""
+    users = load_users()
+    user_found = None
+    for username, user_data in users.items():
+        user_token = user_data.get('reset_token')
+        token_expiry = user_data.get('reset_token_expiry')
+        
+        if user_token == token and token_expiry:
+            expiry_time = datetime.datetime.fromisoformat(token_expiry)
+            if datetime.datetime.now() < expiry_time:
+                user_found = username
+                break
+    
+    if not user_found:
+        flash("Invalid or expired reset token", "error")
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
+            return render_template('reset_password.html', token=token)
+        
+        is_valid, msg = validate_password(password)
+        if not is_valid:
+            flash(msg, "error")
+            return render_template('reset_password.html', token=token)
+        
+        users[user_found]['password_hash'] = generate_password_hash(password, method='scrypt')
+        users[user_found]['last_password_change'] = datetime.datetime.now().isoformat()
+        users[user_found].pop('reset_token', None)
+        users[user_found].pop('reset_token_expiry', None)
+        
+        save_users(users)
+        
+        flash("Password reset successfully! Please login with your new password.", "success")
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html', token=token)
+
+@app.route("/profile")
+@login_required
+@antigravity_trace
+def profile():
+    """User profile page with anti-gravity tracing"""
+    users = load_users()
+    user_data = users.get(session['user_id'], {})
+    
+    profile_data = {
+        'username': session['user_id'],
+        'role': session['user_role'],
+        'email': user_data.get('email', ''),
+        'created_at': user_data.get('created_at', ''),
+        'last_login': user_data.get('last_login', ''),
+        'last_password_change': user_data.get('last_password_change', '')
+    }
+    
+    return render_template('profile.html', user=profile_data)
+
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+@antigravity_trace
+def change_password():
+    """Change password route with anti-gravity tracing"""
+    if request.method == 'POST':
+        current_password = request.form.get('current_password', '')
+        new_password = request.form.get('new_password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        users = load_users()
+        user = users.get(session['user_id'])
+        
+        if not user:
+            flash("User not found", "error")
+            return redirect(url_for('profile'))
+        
+        if not check_password_hash(user['password_hash'], current_password):
+            flash("Current password is incorrect", "error")
+            return redirect(url_for('change_password'))
+        
+        if new_password != confirm_password:
+            flash("New passwords do not match", "error")
+            return redirect(url_for('change_password'))
+        
+        is_valid, msg = validate_password(new_password)
+        if not is_valid:
+            flash(msg, "error")
+            return redirect(url_for('change_password'))
+        
+        user['password_hash'] = generate_password_hash(new_password, method='scrypt')
+        user['last_password_change'] = datetime.datetime.now().isoformat()
+        
+        save_users(users)
+        
+        flash("Password changed successfully!", "success")
+        return redirect(url_for('profile'))
+    
+    return render_template('change_password.html')
+
+# ==================== ADMIN USER MANAGEMENT ROUTES ====================
+@app.route("/users")
+@login_required
+@role_required('admin')
+@antigravity_trace
+def manage_users():
+    """User management page (admin only)"""
+    users = load_users()
+    
+    # Prepare user list without password hashes
+    user_list = []
+    for username, data in users.items():
+        user_list.append({
+            'username': username,
+            'role': data.get('role', 'viewer'),
+            'email': data.get('email', ''),
+            'created_at': data.get('created_at', ''),
+            'last_login': data.get('last_login', ''),
+            'is_active': data.get('is_active', True),
+            'failed_attempts': data.get('failed_attempts', 0)
+        })
+    
+    return render_template('users.html', users=user_list)
+
+@app.route("/users/add", methods=["GET", "POST"])
+@login_required
+@role_required('admin')
+@antigravity_trace
+def add_user():
+    """Add new user (admin only)"""
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        role = request.form.get('role', 'viewer')
+        
+        success, message = create_user(username, password, email, role)
+        
+        if success:
+            flash(message, "success")
+            return redirect(url_for('manage_users'))
+        else:
+            flash(message, "error")
+    
+    return render_template('add_user.html')
+
+@app.route("/users/edit/<username>", methods=["GET", "POST"])
+@login_required
+@role_required('admin')
+@antigravity_trace
+def edit_user(username):
+    """Edit user (admin only)"""
+    users = load_users()
+    
+    if username not in users:
+        flash("User not found", "error")
+        return redirect(url_for('manage_users'))
+    
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        role = request.form.get('role', 'viewer')
+        is_active = request.form.get('is_active') == 'on'
+        
+        users[username]['email'] = email
+        users[username]['role'] = role
+        users[username]['is_active'] = is_active
+        
+        # If deactivating, clear any locks
+        if not is_active:
+            users[username]['locked_until'] = None
+            users[username]['failed_attempts'] = 0
+        
+        save_users(users)
+        
+        flash(f"User {username} updated successfully", "success")
+        return redirect(url_for('manage_users'))
+    
+    return render_template('edit_user.html', user=users[username], username=username)
+
+@app.route("/users/delete/<username>")
+@login_required
+@role_required('admin')
+@antigravity_trace
+def delete_user(username):
+    """Delete user (admin only)"""
+    if username == session['user_id']:
+        flash("You cannot delete your own account", "error")
+        return redirect(url_for('manage_users'))
+    
+    users = load_users()
+    
+    if username in users:
+        del users[username]
+        save_users(users)
+        flash(f"User {username} deleted successfully", "success")
+    else:
+        flash("User not found", "error")
+    
+    return redirect(url_for('manage_users'))
+
+@app.route("/dashboard")
+@login_required
+@antigravity_trace
+def dashboard():
+    """Main dashboard page with anti-gravity tracing"""
+    # Load statistics
+    students = load_students()
+    attendance = load_attendance()
+    
+    # Calculate stats
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    present_today = 0
+    
+    for roll_no, data in attendance.items():
+        if 'entry' in data:
+            present_today += 1
+    
+    stats = {
+        'total_students': len(students),
+        'present_today': present_today,
+        'absent_today': len(students) - present_today,
+        'attendance_rate': (present_today / len(students) * 100) if students else 0
+    }
+    
+    return render_template('dashboard.html', stats=stats, user_role=session.get('user_role'))
+
 @app.route("/")
 @antigravity_trace
 def home():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
     return render_template("home.html")
 
 @app.route("/add_student", methods=["GET", "POST"])
+@login_required
+@role_required('admin', 'teacher')
 def add_student():
     if request.method == "POST":
         roll_no = request.form.get("roll_no")
@@ -63,6 +687,7 @@ def add_student():
     return render_template("add_student.html")
 
 @app.route("/students")
+@login_required
 def students():
     students_data = load_students()
     return render_template("students.html", students=students_data)
@@ -74,6 +699,8 @@ def on_rm_error(func, path, exc_info):
     func(path)
 
 @app.route("/delete_student/<roll_no>")
+@login_required
+@role_required('admin')
 def delete_student(roll_no):
     students = load_students()
     if roll_no in students:
@@ -96,6 +723,7 @@ def delete_student(roll_no):
     return redirect(url_for("students"))
 
 @app.route("/attendance")
+@login_required
 def attendance():
     return render_template("attendance.html")
     
@@ -123,6 +751,8 @@ import cv2
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 @app.route("/start_capture/<roll_no>")
+@login_required
+@role_required('admin', 'teacher')
 def start_capture(roll_no):
     return render_template("capture.html", roll_no=roll_no)
 
@@ -271,6 +901,8 @@ def get_images_and_labels(dataset_path):
     return face_samples, ids
 
 @app.route("/train")
+@login_required
+@role_required('admin')
 def train_model():
     dataset_path = DATASET_DIR
     
@@ -303,7 +935,6 @@ def train_model():
     return redirect(url_for("home"))
 
 # --- Phase 6: Live Attendance ---
-import datetime
 import time
 
 ATTENDANCE_FILE = os.path.join(BASE_DIR, 'attendance.json')
@@ -496,6 +1127,8 @@ import pandas as pd
 from flask import send_file
 
 @app.route("/export")
+@login_required
+@role_required('admin', 'teacher')
 def export():
     students = load_students()
     attendance = load_attendance()

@@ -1,0 +1,13 @@
+{
+    "admin": {
+        "password_hash": "scrypt:32768:8:1$yw6VTXTHRqKmBWPC$9aacbe539bc521e57d083779a55ae40479dbef676564efe9c3172ef7e6309810e09bbb8ffc48bdd5fd7b6202b03bb0125b336e5d942e601e469a8d71e527c180",
+        "role": "admin",
+        "email": "admin@school.edu",
+        "created_at": "2026-01-10T23:20:47.315985",
+        "last_login": "2026-01-10T23:20:47.517414",
+        "failed_attempts": 0,
+        "locked_until": null,
+        "is_active": true,
+        "last_password_change": "2026-01-10T23:20:47.315985"
+    }
+}

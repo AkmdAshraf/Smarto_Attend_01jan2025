@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Smarto Attend{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Manage Users</h2>
+        <a href="{{ url_for('add_user') }}"><button>Add User</button></a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td style="text-transform: capitalize;">{{ user.role }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.is_active %}
+                    <span style="color: #28a745;">Active</span>
+                    {% else %}
+                    <span style="color: #dc3545;">Inactive</span>
+                    {% endif %}
+                    {% if user.failed_attempts >= 5 %}
+                    <span style="color: #ffc107; font-size: 0.8em;">(Locked)</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_user', username=user.username) }}"
+                        style="color: #4da6ff; margin-right: 10px;">Edit</a>
+                    {% if user.username != session['user_id'] %}
+                    <a href="{{ url_for('delete_user', username=user.username) }}" style="color: #dc3545;"
+                        onclick="return confirm('Are you sure?')">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

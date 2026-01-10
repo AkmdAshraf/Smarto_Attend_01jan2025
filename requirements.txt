@@ -1,0 +1,10 @@
+flask
+opencv-python
+pandas
+openpyxl
+flask-talisman
+flask-limiter
+flask-session
+flask-wtf
+bleach
+werkzeug

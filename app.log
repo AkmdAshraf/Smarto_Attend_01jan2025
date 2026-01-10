@@ -358,3 +358,229 @@
 2026-01-07 19:57:46,332 - logger_config.py:157 - INFO - [preprocess_face] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
 2026-01-07 19:57:49,697 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
 2026-01-07 19:57:49,709 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:15:22,257 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:15:22,274 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 14.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:15:29,258 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:15:29,261 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 2.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:15:29,272 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:15:29,298 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 26.78ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:16:01,475 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:01,477 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:01,704 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 226.34ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:01,708 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 231.34ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 293, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:04,247 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:04,249 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:16:17,098 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:17,100 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:17,370 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 267.43ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:17,373 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 272.99ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 293, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:26,692 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:26,694 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 1.53ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:16:34,871 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:34,873 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:35,191 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 315.63ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:35,195 - logger_config.py:165 - ERROR - [login] [Status: ERROR] [Duration: 322.15ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 293, in login
+    users = load_users_wrapper()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 291, in load_users_wrapper
+    return load_users()
+           ^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:16:46,463 - logger_config.py:139 - INFO - [register] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:16:46,470 - logger_config.py:157 - INFO - [register] [Status: OUT] [Duration: 6.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:17:10,201 - logger_config.py:139 - INFO - [register] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:17:10,204 - logger_config.py:139 - INFO - [create_user] [Status: IN] [Duration: 0ms] [Payload: Args: ['Testuser', '123', 'test@test.com'], Kwargs: {'role': 'viewer'}]
+2026-01-10 23:17:10,205 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:17:10,533 - logger_config.py:165 - ERROR - [load_users] [Status: ERROR] [Duration: 326.34ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:17:10,536 - logger_config.py:165 - ERROR - [create_user] [Status: ERROR] [Duration: 330.35ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 127, in create_user
+    users = load_users()
+            ^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:17:10,541 - logger_config.py:165 - ERROR - [register] [Status: ERROR] [Duration: 337.87ms] [Payload: Exception: module 'datetime' has no attribute 'now']
+Traceback (most recent call last):
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 382, in register
+    success, message = create_user(username, password, email, role="viewer")
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 127, in create_user
+    users = load_users()
+            ^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 169, in wrapper
+    raise e
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\logger_config.py", line 145, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "e:\MARLION\Smart_attendence_antigravity\Smarto_Attend\app.py", line 97, in load_users
+    "created_at": datetime.now().isoformat(),
+                  ^^^^^^^^^^^^
+AttributeError: module 'datetime' has no attribute 'now'
+2026-01-10 23:17:17,270 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:17:17,272 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:20,391 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:20,422 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 29.90ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:31,852 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:31,855 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 2.33ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:33,495 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:33,497 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:33,512 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:33,515 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 2.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,069 - logger_config.py:139 - INFO - [login] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:47,071 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:47,316 - logger_config.py:139 - INFO - [save_users] [Status: IN] [Duration: 0ms] [Payload: Args: [{'admin': {'password_hash': 'scrypt:32768:8:1$yw6VTXTHRqKmBWPC$9aacbe539bc521e57d083779a55ae40479dbef676564efe9c3172ef7e6309810e09bbb8ffc48bdd5fd7b6202b03bb0125b336e5d942e601e469a8d71e527c180', 'role': 'admin', 'email': 'admin@school.edu', 'created_at': '2026-01-10T23:20:47.315985', 'last_...]
+2026-01-10 23:20:47,318 - logger_config.py:157 - INFO - [save_users] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,318 - logger_config.py:157 - INFO - [load_users] [Status: OUT] [Duration: 245.23ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,517 - logger_config.py:139 - INFO - [save_users] [Status: IN] [Duration: 0ms] [Payload: Args: [{'admin': {'password_hash': 'scrypt:32768:8:1$yw6VTXTHRqKmBWPC$9aacbe539bc521e57d083779a55ae40479dbef676564efe9c3172ef7e6309810e09bbb8ffc48bdd5fd7b6202b03bb0125b336e5d942e601e469a8d71e527c180', 'role': 'admin', 'email': 'admin@school.edu', 'created_at': '2026-01-10T23:20:47.315985', 'last_...]
+2026-01-10 23:20:47,519 - logger_config.py:157 - INFO - [save_users] [Status: OUT] [Duration: 1.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,519 - logger_config.py:157 - INFO - [login] [Status: OUT] [Duration: 448.25ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,533 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:47,534 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:47,542 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 8.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:47,543 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 9.99ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:53,007 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:53,008 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:53,019 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:53,023 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:20:53,036 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 12.53ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:20:53,042 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 19.53ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:02,006 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:02,007 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:02,010 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 3.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:02,011 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 4.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:06,323 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:06,324 - logger_config.py:139 - INFO - [profile] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:06,326 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:06,327 - logger_config.py:157 - INFO - [load_users] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:06,336 - logger_config.py:157 - INFO - [profile] [Status: OUT] [Duration: 9.33ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:06,337 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 12.33ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:09,462 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:09,464 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:09,466 - logger_config.py:139 - INFO - [manage_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:09,466 - logger_config.py:139 - INFO - [load_users] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:09,468 - logger_config.py:157 - INFO - [load_users] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:09,488 - logger_config.py:157 - INFO - [manage_users] [Status: OUT] [Duration: 21.47ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:09,488 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 22.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:09,490 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 25.99ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:13,256 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:13,257 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:13,260 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 2.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:13,261 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 5.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:15,406 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:15,407 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:15,409 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 1.23ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:15,410 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 3.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:16,392 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:16,393 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:16,407 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:16,408 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:16,411 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 3.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:16,416 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 9.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:17,420 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:17,434 - logger_config.py:157 - INFO - [decorated_function] [Status: OUT] [Duration: 13.14ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:19,359 - logger_config.py:139 - INFO - [home] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:19,361 - logger_config.py:157 - INFO - [home] [Status: OUT] [Duration: 0.00ms] [Payload: RuntimeValues: {}]
+2026-01-10 23:21:19,376 - logger_config.py:139 - INFO - [decorated_function] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:19,381 - logger_config.py:139 - INFO - [dashboard] [Status: IN] [Duration: 0ms] [Payload: Args: [], Kwargs: {}]
+2026-01-10 23:21:19,385 - logger_config.py:157 - INFO - [dashboard] [Status: OUT] [Duration: 1.24ms] [Payload: RuntimeValues: {}]

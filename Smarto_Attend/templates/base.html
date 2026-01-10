@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}SMARTO ATTEND A+{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <h1>SMARTO ATTEND</h1>
+    <p>Authentication & Security Framework</p>
+
+    <!-- Navigation -->
+    <div style="margin-bottom: 20px;">
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('dashboard') }}" style="margin: 0 10px; color: #4da6ff;">Dashboard</a>
+        <a href="{{ url_for('profile') }}" style="margin: 0 10px; color: #4da6ff;">Profile</a>
+        {% if session.get('user_role') == 'admin' %}
+        <a href="{{ url_for('manage_users') }}" style="margin: 0 10px; color: #4da6ff;">Users</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" style="margin: 0 10px; color: #dc3545;">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" style="margin: 0 10px; color: #4da6ff;">Login</a>
+        {% endif %}
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container" style="padding: 10px; margin-bottom: 0;">
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</body>
+
+</html>
