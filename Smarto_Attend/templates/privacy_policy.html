@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Smarto Attend{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card bg-dark text-light border-secondary">
+            <div class="card-header border-secondary">
+                <h2 class="mb-0"><i class="fas fa-user-shield me-2 text-primary"></i>Privacy Policy</h2>
+            </div>
+            <div class="card-body">
+                <section class="mb-4">
+                    <h4 class="text-info">1. Introduction</h4>
+                    <p>At Smarto Attend, we respect the privacy of our students and staff. This Privacy Policy explains
+                        how we collect, use, and protect the data processed by the automated attendance system.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">2. Data Collection</h4>
+                    <p>We collect the following types of information:</p>
+                    <ul>
+                        <li><strong>Biometric Data:</strong> Images captured during registration and used for live
+                            recognition. These are processed to create numerical facial embeddings.</li>
+                        <li><strong>Student Information:</strong> Name, Roll Number, and attendance logs (entry/exit
+                            times).</li>
+                        <li><strong>System Logs:</strong> Records of user login activity and administrative changes.
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">3. How We Use Data</h4>
+                    <p>Data is used exclusively for:</p>
+                    <ul>
+                        <li>Automated attendance tracking.</li>
+                        <li>Generating attendance reports for educational purposes.</li>
+                        <li>System maintenance and security auditing.</li>
+                    </ul>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">4. Data Storage and Security</h4>
+                    <p>All data, including facial images and attendance records, is stored **locally** on the
+                        institution's server. We do not use third-party cloud storage for biometric data. Access is
+                        restricted to authorized administrative and teaching staff.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">5. Data Retention</h4>
+                    <p>Biometric data is retained as long as the student remains enrolled in the institution or until
+                        manually deleted by an administrator. Attendance records are kept for the duration required by
+                        institutional policy.</p>
+                </section>
+
+                <div class="mt-4 p-3 bg-secondary bg-opacity-10 border border-secondary rounded text-center">
+                    <p class="mb-0 text-muted">For privacy concerns, please contact: <a href="mailto:admin@school.edu"
+                            class="text-info">admin@school.edu</a></p>
+                </div>
+            </div>
+            <div class="card-footer border-secondary text-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-info">Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

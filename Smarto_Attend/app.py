@@ -10,13 +10,13 @@ import numpy as np
 import datetime
 from datetime import time as dt_time
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, Response, session
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_talisman import Talisman
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import bleach
-from flask_wtf.csrf import CSRFProtect
+# from flask_wtf.csrf import CSRFProtect
 from logger_config import antigravity_trace, track_runtime_value
 import cv2
 
@@ -25,9 +25,9 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Required for flash messages
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=30)
-app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True only with HTTPS
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
@@ -676,9 +676,7 @@ def dashboard():
 @app.route("/")
 @antigravity_trace
 def home():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard'))
-    return render_template("home.html")
+    return redirect(url_for('login'))
 
 @app.route("/add_student", methods=["GET", "POST"])
 @login_required
@@ -2179,7 +2177,7 @@ def export_period_attendance():
                 'Total Students': len(students),
                 'Present Students': present_count,
                 'Absent Students': len(students) - present_count,
-                'Attendance %': round((present_count / len(students)) * 100, 2),
+                'Attendance %': round((present_count / len(students)) * 100, 2) if len(students) > 0 else 0,
                 'Average Duration': str(avg_duration)[:7] if present_count > 0 else '00:00:00'
             })
         
@@ -2230,6 +2228,33 @@ def error_frame(message):
     frame = buffer.tobytes()
     yield (b'--frame\r\n'
            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+
+# ==================== LEGAL PAGES ====================
+@app.route("/disclaimer")
+@antigravity_trace
+def disclaimer():
+    """Disclaimer page"""
+    return render_template("disclaimer.html")
+
+@app.route("/privacy-policy")
+@antigravity_trace
+def privacy_policy():
+    """Privacy Policy page"""
+    return render_template("privacy_policy.html")
+
+@app.route("/terms-conditions")
+@antigravity_trace
+def terms_conditions():
+    """Terms & Conditions page"""
+    return render_template("terms_conditions.html")
+
+@app.route("/help")
+@login_required
+@antigravity_trace
+def help_page():
+    """Help and user manual page"""
+    return render_template("help.html")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & User Manual - Attendance Management System</title>
+    <style>
+        /* Import main application styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .help-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .help-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .help-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .help-header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .help-content {
+            display: flex;
+            min-height: 800px;
+        }
+
+        .toc-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #eaeaea;
+            padding: 30px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .toc-sidebar h3 {
+            color: #667eea;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .toc-nav {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .toc-nav li {
+            margin: 10px 0;
+        }
+
+        .toc-nav a {
+            color: #555;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .toc-nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .toc-nav .active {
+            background: #667eea;
+            color: white;
+        }
+
+        .help-main {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .feature-card h4 {
+            color: #333;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-card h4 i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin: 20px 0;
+            padding-left: 50px;
+            position: relative;
+        }
+
+        .steps li:before {
+            content: counter(step-counter);
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+
+        .badge-admin {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-teacher {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-viewer {
+            background: #6c757d;
+            color: white;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quick-tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .help-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .help-content {
+                flex-direction: column;
+            }
+            
+            .toc-sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+            }
+            
+            .help-main {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="help-container">
+        <div class="help-header">
+            <h1>📚 Help & User Manual</h1>
+            <div class="subtitle">Attendance Management System - Complete Guide</div>
+        </div>
+
+        <div class="help-content">
+            <!-- Table of Contents Sidebar -->
+            <div class="toc-sidebar">
+                <h3>Table of Contents</h3>
+                <ul class="toc-nav">
+                    <li><a href="#getting-started" class="active">🚀 Getting Started</a></li>
+                    <li><a href="#authentication">🔐 Authentication</a></li>
+                    <li><a href="#dashboard">📊 Dashboard</a></li>
+                    <li><a href="#student-management">👨‍🎓 Student Management</a></li>
+                    <li><a href="#face-capture">📸 Face Capture</a></li>
+                    <li><a href="#model-training">🤖 Model Training</a></li>
+                    <li><a href="#attendance">✅ Attendance Recording</a></li>
+                    <li><a href="#period-management">⏰ Period Management</a></li>
+                    <li><a href="#reports">📈 Reports & Export</a></li>
+                    <li><a href="#user-management">👥 User Management</a></li>
+                    <li><a href="#debugging">🐛 Debugging Tools</a></li>
+                    <li><a href="#security">🔒 Security Features</a></li>
+                    <li><a href="#troubleshooting">🔧 Troubleshooting</a></li>
+                </ul>
+
+                <div class="quick-tip">
+                    <strong>💡 Quick Tip:</strong> 
+                    <p>Use <kbd>Ctrl+F</kbd> to search within this guide for specific topics.</p>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="help-main">
+                <!-- Getting Started Section -->
+                <div id="getting-started" class="section">
+                    <h2>🚀 Getting Started</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🏠</i> Welcome to Attendance Management System</h4>
+                        <p>This system provides automated face recognition-based attendance tracking with period-wise management, detailed reporting, and multi-user role-based access control.</p>
+                        
+                        <h5>System Requirements:</h5>
+                        <ul>
+                            <li>Web browser (Chrome 80+, Firefox 75+, Edge 80+)</li>
+                            <li>Webcam for face capture and attendance</li>
+                            <li>Internet connection for initial setup</li>
+                            <li>Modern computer with minimum 4GB RAM</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🎯</i> Key Features Overview</h4>
+                        <ul>
+                            <li><strong>Face Recognition Attendance:</strong> Automatic attendance marking using AI</li>
+                            <li><strong>Period-wise Tracking:</strong> Track attendance for each class period</li>
+                            <li><strong>Multi-User Roles:</strong> Admin, Teacher, and Viewer roles</li>
+                            <li><strong>Real-time Monitoring:</strong> Live attendance tracking</li>
+                            <li><strong>Comprehensive Reports:</strong> Generate detailed Excel reports</li>
+                            <li><strong>Security:</strong> Password policies, session management, CSRF protection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Authentication Section -->
+                <div id="authentication" class="section">
+                    <h2>🔐 Authentication</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🔑</i> Login Process</h4>
+                        <ol class="steps">
+                            <li>Navigate to the login page (automatically redirects from home page)</li>
+                            <li>Enter your username and password</li>
+                            <li>Check "Remember Me" to stay logged in for longer sessions (optional)</li>
+                            <li>Click "Login" to access the system</li>
+                        </ol>
+                        
+                        <div class="note">
+                            <strong>Note:</strong> After 5 failed attempts, accounts are locked for 15 minutes.
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>👤</i> User Registration</h4>
+                        <p>New users can register by clicking "Register" on the login page:</p>
+                        <ol class="steps">
+                            <li>Choose a username (3-50 characters, alphanumeric only)</li>
+                            <li>Provide a valid email address</li>
+                            <li>Create a strong password:
+                                <ul>
+                                    <li>Minimum 12 characters</li>
+                                    <li>At least one uppercase letter</li>
+                                    <li>At least one lowercase letter</li>
+                                    <li>At least one number</li>
+                                    <li>At least one special character</li>
+                                </ul>
+                            </li>
+                            <li>Confirm your password</li>
+                            <li>Click "Register" to create your account</li>
+                        </ol>
+                        <p>New accounts are created with "Viewer" role by default.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🔓</i> Password Recovery</h4>
+                        <p>If you forget your password:</p>
+                        <ol class="steps">
+                            <li>Click "Forgot Password" on the login page</li>
+                            <li>Enter your registered email address</li>
+                            <li>Check your email for the reset link</li>
+                            <li>Click the link and create a new password</li>
+                        </ol>
+                        
+                        <div class="note">
+                            <strong>Security:</strong> Password reset links expire after 1 hour.
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🚪</i> Logout</h4>
+                        <p>To securely logout:</p>
+                        <ol class="steps">
+                            <li>Click on your username in the top right corner</li>
+                            <li>Select "Logout" from the dropdown menu</li>
+                            <li>Or navigate to /logout directly</li>
+                        </ol>
+                        <p>All session data will be cleared upon logout.</p>
+                    </div>
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section">
+                    <h2>📊 Dashboard</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🏠</i> Overview</h4>
+                        <p>The dashboard provides a quick overview of today's attendance statistics:</p>
+                        <ul>
+                            <li><strong>Total Students:</strong> Number of registered students</li>
+                            <li><strong>Present Today:</strong> Students marked present in at least one period</li>
+                            <li><strong>Absent Today:</strong> Students not present in any period</li>
+                            <li><strong>Attendance Rate:</strong> Overall percentage attendance for the day</li>
+                            <li><strong>Current Period:</strong> Active class period (if any)</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>📱</i> Navigation Menu</h4>
+                        <p>Based on your role, you'll see different menu options:</p>
+                        
+                        <h5>Admin <span class="role-badge badge-admin">Admin</span></h5>
+                        <ul>
+                            <li>Dashboard</li>
+                            <li>Add Student</li>
+                            <li>Students List</li>
+                            <li>Take Attendance</li>
+                            <li>Period Attendance</li>
+                            <li>Manage Periods</li>
+                            <li>Reports</li>
+                            <li>Export Data</li>
+                            <li>User Management</li>
+                            <li>Train Model</li>
+                            <li>Debug Tools</li>
+                            <li>Help</li>
+                            <li>Profile</li>
+                        </ul>
+
+                        <h5>Teacher <span class="role-badge badge-teacher">Teacher</span></h5>
+                        <ul>
+                            <li>Dashboard</li>
+                            <li>Add Student</li>
+                            <li>Students List</li>
+                            <li>Take Attendance</li>
+                            <li>Period Attendance</li>
+                            <li>Reports</li>
+                            <li>Export Data</li>
+                            <li>Help</li>
+                            <li>Profile</li>
+                        </ul>
+
+                        <h5>Viewer <span class="role-badge badge-viewer">Viewer</span></h5>
+                        <ul>
+                            <li>Dashboard</li>
+                            <li>Students List</li>
+                            <li>Reports</li>
+                            <li>Help</li>
+                            <li>Profile</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Student Management Section -->
+                <div id="student-management" class="section">
+                    <h2>👨‍🎓 Student Management</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>➕</i> Adding New Students</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> <span class="role-badge badge-teacher">Teacher</span></p>
+                        <ol class="steps">
+                            <li>Navigate to "Add Student" from the menu</li>
+                            <li>Enter student's Roll Number (unique identifier)</li>
+                            <li>Enter student's Full Name</li>
+                            <li>Click "Add Student"</li>
+                            <li>System will redirect to face capture page automatically</li>
+                        </ol>
+                        
+                        <div class="note">
+                            <strong>Note:</strong> Each student must have a unique Roll Number.
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>📋</i> Viewing Students List</h4>
+                        <p>All roles can view the student list:</p>
+                        <ol class="steps">
+                            <li>Navigate to "Students" from the menu</li>
+                            <li>View all registered students with their Roll Numbers and Names</li>
+                            <li>Admins see additional "Delete" buttons</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🗑️</i> Deleting Students</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> Only</p>
+                        <ol class="steps">
+                            <li>Navigate to "Students" from the menu</li>
+                            <li>Find the student you want to delete</li>
+                            <li>Click the "Delete" button next to the student</li>
+                            <li>Confirm the deletion</li>
+                        </ol>
+                        
+                        <div class="warning">
+                            <strong>Warning:</strong> Deleting a student will remove all their data including face images and attendance records.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Face Capture Section -->
+                <div id="face-capture" class="section">
+                    <h2>📸 Face Capture</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🎥</i> Capturing Face Images</h4>
+                        <p>After adding a student, you'll be redirected to the face capture page:</p>
+                        <ol class="steps">
+                            <li>Ensure good lighting on the student's face</li>
+                            <li>Position the student about 1-2 feet from the webcam</li>
+                            <li>Follow the on-screen instructions:
+                                <ul>
+                                    <li>First 10 images: Look straight at the camera</li>
+                                    <li>Next 10 images: Turn head slightly left</li>
+                                    <li>Next 10 images: Turn head slightly right</li>
+                                    <li>Next 10 images: Tilt head up</li>
+                                    <li>Final 10 images: Tilt head down</li>
+                                </ul>
+                            </li>
+                            <li>System captures 50 images total for better recognition</li>
+                            <li>Wait for "DONE!" message before leaving</li>
+                        </ol>
+                        
+                        <div class="note">
+                            <strong>Tips for best results:</strong>
+                            <ul>
+                                <li>Remove glasses if possible</li>
+                                <li>Ensure face is clearly visible</li>
+                                <li>Keep background simple</li>
+                                <li>Avoid harsh shadows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Training Section -->
+                <div id="model-training" class="section">
+                    <h2>🤖 Model Training</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>⚙️</i> Training the Face Recognition Model</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> Only</p>
+                        <ol class="steps">
+                            <li>Navigate to "Train Model" from the menu</li>
+                            <li>System will:
+                                <ul>
+                                    <li>Load all captured face images</li>
+                                    <li>Process and standardize images</li>
+                                    <li>Train the LBPH (Local Binary Patterns Histograms) model</li>
+                                    <li>Save the trained model to file</li>
+                                </ul>
+                            </li>
+                            <li>Training time depends on number of students and images</li>
+                            <li>You'll receive a success message when complete</li>
+                        </ol>
+                        
+                        <div class="note">
+                            <strong>Note:</strong> Train the model whenever you add new students or update face images.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div id="attendance" class="section">
+                    <h2>✅ Attendance Recording</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>📹</i> Live Attendance Mode</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> <span class="role-badge badge-teacher">Teacher</span></p>
+                        <ol class="steps">
+                            <li>Navigate to "Take Attendance" from the menu</li>
+                            <li>System opens live camera feed</li>
+                            <li>Students walk through the camera view</li>
+                            <li>System automatically:
+                                <ul>
+                                    <li>Detects faces</li>
+                                    <li>Recognizes students</li>
+                                    <li>Marks entry when crossing the yellow line from left to right</li>
+                                    <li>Marks exit when crossing from right to left</li>
+                                </ul>
+                            </li>
+                            <li>Real-time display shows recognized names</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>⏰</i> Period-wise Attendance</h4>
+                        <p>Advanced feature for tracking attendance per class period:</p>
+                        <ol class="steps">
+                            <li>Navigate to "Period Attendance"</li>
+                            <li>System shows current period information</li>
+                            <li>Attendance is automatically linked to the active period</li>
+                            <li>System tracks:
+                                <ul>
+                                    <li>Which period the student attended</li>
+                                    <li>Entry and exit times per period</li>
+                                    <li>Duration in each period</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🕒</i> Time Window Restrictions</h4>
+                        <p>The system enforces attendance within configured time windows:</p>
+                        <ul>
+                            <li><strong>Default:</strong> 9:00 AM to 5:00 PM</li>
+                            <li><strong>Grace Period:</strong> 5 minutes before/after each period</li>
+                            <li>Attendance outside time windows is not recorded</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Period Management Section -->
+                <div id="period-management" class="section">
+                    <h2>⏰ Period Management</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>📅</i> Managing Class Periods</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> Only</p>
+                        <ol class="steps">
+                            <li>Navigate to "Manage Periods"</li>
+                            <li>View existing periods with their timings</li>
+                            <li>Add new periods using "Add Period"</li>
+                            <li>Edit existing periods using "Edit" button</li>
+                            <li>Deactivate periods using "Delete" button (soft delete)</li>
+                            <li>Reactivate periods using "Activate" button</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>➕</i> Adding a New Period</h4>
+                        <ol class="steps">
+                            <li>Click "Add Period"</li>
+                            <li>Enter Period Name (e.g., "Mathematics", "BREAK")</li>
+                            <li>Set Start Time and End Time (24-hour format)</li>
+                            <li>Enter Subject and Teacher (for class periods)</li>
+                            <li>Check "Is Break" for break periods</li>
+                            <li>Click "Save Period"</li>
+                        </ol>
+                        
+                        <div class="warning">
+                            <strong>Validation:</strong> System checks for overlapping periods and prevents conflicts.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reports" class="section">
+                    <h2>📈 Reports & Export</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>📊</i> Viewing Reports</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> <span class="role-badge badge-teacher">Teacher</span> <span class="role-badge badge-viewer">Viewer</span></p>
+                        <ol class="steps">
+                            <li>Navigate to "Reports" from the menu</li>
+                            <li>Select date for report (defaults to today)</li>
+                            <li>View period-wise attendance summary</li>
+                            <li>Click on student names to view individual reports</li>
+                            <li>View overall attendance percentages</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>💾</i> Exporting Data to Excel</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> <span class="role-badge badge-teacher">Teacher</span></p>
+                        <ol class="steps">
+                            <li>Navigate to "Export Data"</li>
+                            <li>Select date range (if prompted)</li>
+                            <li>Click "Export to Excel"</li>
+                            <li>Download will start automatically</li>
+                            <li>Open the Excel file to view:
+                                <ul>
+                                    <li>Daily summary sheet</li>
+                                    <li>Period details sheet</li>
+                                    <li>Period summary sheet</li>
+                                    <li>Student timeline sheet</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>👤</i> Individual Student Reports</h4>
+                        <p>To view detailed reports for a specific student:</p>
+                        <ol class="steps">
+                            <li>Navigate to "Reports"</li>
+                            <li>Click on the student's name in the list</li>
+                            <li>View detailed period-by-period attendance</li>
+                            <li>See entry/exit times for each period</li>
+                            <li>Check attendance percentages per period</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- User Management Section -->
+                <div id="user-management" class="section">
+                    <h2>👥 User Management</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>👑</i> Managing Users</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> Only</p>
+                        <ol class="steps">
+                            <li>Navigate to "User Management"</li>
+                            <li>View all system users with their roles</li>
+                            <li>Add new users using "Add User"</li>
+                            <li>Edit existing users using "Edit" button</li>
+                            <li>Delete users using "Delete" button</li>
+                            <li>Activate/deactivate user accounts</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🆕</i> Adding New Users</h4>
+                        <ol class="steps">
+                            <li>Click "Add User"</li>
+                            <li>Enter username, email, and password</li>
+                            <li>Select role: Admin, Teacher, or Viewer</li>
+                            <li>Click "Create User"</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🔧</i> Profile Management</h4>
+                        <p>All users can manage their own profiles:</p>
+                        <ol class="steps">
+                            <li>Click on your username in the top right</li>
+                            <li>Select "Profile" to view account details</li>
+                            <li>Select "Change Password" to update password</li>
+                            <li>View last login time and account creation date</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Debugging Section -->
+                <div id="debugging" class="section">
+                    <h2>🐛 Debugging Tools</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🔍</i> Debug Dashboard</h4>
+                        <p><span class="role-badge badge-admin">Admin</span> Only</p>
+                        <ol class="steps">
+                            <li>Navigate to "Debug Tools"</li>
+                            <li>Check ID mismatches between JSON and dataset</li>
+                            <li>Test recognition for specific students</li>
+                            <li>Fix mismatches automatically</li>
+                            <li>View system logs</li>
+                        </ol>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>🎯</i> Testing Face Recognition</h4>
+                        <p>Test if a student is properly recognized:</p>
+                        <ol class="steps">
+                            <li>Go to Debug Tools</li>
+                            <li>Enter student Roll Number</li>
+                            <li>Click "Test Recognition"</li>
+                            <li>View recognition accuracy and confidence scores</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div id="security" class="section">
+                    <h2>🔒 Security Features</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>🛡️</i> Security Measures Implemented</h4>
+                        <ul>
+                            <li><strong>Password Policies:</strong> Strong password requirements</li>
+                            <li><strong>Account Lockout:</strong> 5 failed attempts lock account for 15 minutes</li>
+                            <li><strong>Session Management:</strong> 30-minute session timeout</li>
+                            <li><strong>CSRF Protection:</strong> All forms protected against Cross-Site Request Forgery</li>
+                            <li><strong>Input Sanitization:</strong> All user inputs are cleaned</li>
+                            <li><strong>HTTPS Enforcement:</strong> Secure cookies and headers</li>
+                            <li><strong>Rate Limiting:</strong> Protection against brute force attacks</li>
+                            <li><strong>Content Security Policy:</strong> Prevents XSS attacks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Troubleshooting Section -->
+                <div id="troubleshooting" class="section">
+                    <h2>🔧 Troubleshooting</h2>
+                    
+                    <div class="feature-card">
+                        <h4><i>❓</i> Common Issues and Solutions</h4>
+                        
+                        <h5>Face Not Recognized</h5>
+                        <ul>
+                            <li><strong>Solution:</strong> Recapture face images with better lighting</li>
+                            <li><strong>Solution:</strong> Train the model again after adding new images</li>
+                            <li><strong>Solution:</strong> Check if student is in the database</li>
+                        </ul>
+
+                        <h5>Camera Not Working</h5>
+                        <ul>
+                            <li><strong>Solution:</strong> Check camera permissions in browser</li>
+                            <li><strong>Solution:</strong> Ensure no other app is using the camera</li>
+                            <li><strong>Solution:</strong> Try a different browser</li>
+                        </ul>
+
+                        <h5>Attendance Not Marking</h5>
+                        <ul>
+                            <li><strong>Solution:</strong> Check if within time window</li>
+                            <li><strong>Solution:</strong> Ensure student crosses the yellow line completely</li>
+                            <li><strong>Solution:</strong> Verify model is trained</li>
+                        </ul>
+
+                        <h5>Login Issues</h5>
+                        <ul>
+                            <li><strong>Solution:</strong> Use "Forgot Password" if password forgotten</li>
+                            <li><strong>Solution:</strong> Contact admin if account locked</li>
+                            <li><strong>Solution:</strong> Clear browser cache and cookies</li>
+                        </ul>
+                    </div>
+
+                    <div class="feature-card">
+                        <h4><i>📞</i> Getting Help</h4>
+                        <p>If you need additional assistance:</p>
+                        <ul>
+                            <li>Contact your system administrator</li>
+                            <li>Check the system logs in Debug Tools</li>
+                            <li>Ensure all prerequisites are met</li>
+                            <li>Verify user permissions and roles</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="help-footer">
+            <p>Attendance Management System Help & User Manual | Version 2.0</p>
+            <p>© 2024 All Rights Reserved | For technical support, contact your system administrator</p>
+        </div>
+
+        <!-- Back to Top Button -->
+        <a href="#" class="back-to-top">↑</a>
+    </div>
+
+    <script>
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc-nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.toc-nav a').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Scroll to section
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Update active link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.toc-nav a');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (window.scrollY >= (sectionTop - 100)) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Back to top button functionality
+        const backToTopButton = document.querySelector('.back-to-top');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                backToTopButton.style.display = 'flex';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+        
+        backToTopButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Highlight current section on page load
+        window.addEventListener('load', function() {
+            const hash = window.location.hash;
+            if (hash) {
+                const targetLink = document.querySelector(`.toc-nav a[href="${hash}"]`);
+                if (targetLink) {
+                    document.querySelectorAll('.toc-nav a').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    targetLink.classList.add('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

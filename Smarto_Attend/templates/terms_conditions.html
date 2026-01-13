@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Terms & Conditions - Smarto Attend{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card bg-dark text-light border-secondary">
+            <div class="card-header border-secondary">
+                <h2 class="mb-0"><i class="fas fa-file-contract me-2 text-success"></i>Terms & Conditions</h2>
+            </div>
+            <div class="card-body">
+                <section class="mb-4">
+                    <h4 class="text-info">1. Acceptance of Terms</h4>
+                    <p>By using the Smarto Attend system, students and staff agree to participate in the automated
+                        face-recognition attendance process and abide by the rules set forth in this document.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">2. Proper Usage</h4>
+                    <p>Users are expected to:</p>
+                    <ul>
+                        <li>Properly present themselves to the camera for accurate identification.</li>
+                        <li>Not attempt to circumvent the system (e.g., using photos or masks).</li>
+                        <li>Report any recognition issues to the instructor immediately.</li>
+                    </ul>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">3. Administrative Authority</h4>
+                    <p>The institution reserves the right to manually override any automated attendance record in case
+                        of system error or suspected misconduct. Administrative decisions regarding attendance finality
+                        rest with the concerned faculty or authorized staff.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">4. System Availability</h4>
+                    <p>While we aim for 100% availability during class hours, the system may experience downtime for
+                        maintenance or technical issues. In such cases, manual attendance methods will be employed.</p>
+                </section>
+
+                <section class="mb-4">
+                    <h4 class="text-info">5. Modifications</h4>
+                    <p>The institution reserves the right to modify these terms or the functionality of the application
+                        at any time. Significant changes will be communicated to all users.</p>
+                </section>
+
+                <div class="mt-4 p-3 bg-secondary bg-opacity-10 border border-secondary rounded text-center">
+                    <p class="mb-0 text-muted">By logging in, you acknowledge that you have read and understood these
+                        terms.</p>
+                </div>
+            </div>
+            <div class="card-footer border-secondary text-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-info">Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

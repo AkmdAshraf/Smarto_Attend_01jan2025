@@ -4,7 +4,7 @@
         "role": "admin",
         "email": "admin@school.edu",
         "created_at": "2026-01-10T23:20:47.315985",
-        "last_login": "2026-01-10T23:20:47.517414",
+        "last_login": "2026-01-13T23:42:45.642215",
         "failed_attempts": 0,
         "locked_until": null,
         "is_active": true,
