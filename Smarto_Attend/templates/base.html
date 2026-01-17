@@ -84,6 +84,11 @@
                                     & Conditions</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="{{ url_for('attendance_log_page') }}">
+                            <i class="fas fa-satellite-dish me-1"></i>Live Log
+                        </a>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('help_page') }}">Help</a></li>
                     <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}"><i
                                 class="fas fa-sign-out-alt me-1"></i>Logout</a></li>
@@ -95,7 +100,7 @@
         </div>
     </nav>
 
-    <div class="container content-wrapper">
+    <div class="content-wrapper">
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

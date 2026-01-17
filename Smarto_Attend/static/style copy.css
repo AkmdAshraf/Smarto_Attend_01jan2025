@@ -23,22 +23,16 @@ a {
 }
 
 /* Container */
-/* Main page content container (NOT navbar) */
-.content-wrapper {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 30px;
-}
-
-/* Card-style pages */
-.page-card {
+.container {
+    max-width: 700px;
+    margin: 30px auto;
     background-color: #1e1e1e;
+    /* Dark Gray Card */
     padding: 30px;
     border-radius: 15px;
-    border: 1px solid #333;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
 }
-
 
 /* Forms */
 form {
@@ -196,40 +190,4 @@ img {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
-}
-
-/* ===== NAVBAR FIX (ADD THESE LINES) ===== */
-
-.navbar {
-    min-height: 70px;
-    padding: 0.8rem 1.5rem;
-}
-
-.navbar-brand {
-    font-size: 1.3rem;
-    letter-spacing: 1px;
-}
-
-.navbar-nav {
-    align-items: center;
-}
-
-.navbar-nav .nav-link {
-    padding: 0.5rem 0.9rem;
-    font-weight: 500;
-}
-
-.dropdown-menu {
-    margin-top: 10px;
-    border-radius: 10px;
-}
-
-/* Fix Bootstrap muted text for dark theme */
-.text-muted {
-    color: #9aa0a6 !important;
-    /* light gray, readable on dark bg */
-}
-
-.small.text-muted {
-    color: #9aa0a6 !important;
 }

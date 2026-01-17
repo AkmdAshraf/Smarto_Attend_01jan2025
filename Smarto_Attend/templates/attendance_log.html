@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Attendance Log - Smarto Attend</title>
+    <!-- Use base theme styles -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0f172a;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+        }
+
+        body {
+            background-color: var(--primary-dark);
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        #videoFeed {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 2px solid var(--accent-blue);
+        }
+
+        .log-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-color: #e2e8f0;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-entry {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+
+        .status-exit {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid #ef4444;
+        }
+
+        .status-unknown {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+            border: 1px solid #eab308;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .instructions-panel {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4">
+        <header class="d-flex justify-content-between align-items-center mb-4 px-3">
+            <div>
+                <h1 class="h3 mb-0 text-white"><i class="fas fa-satellite-dish me-2 text-primary"></i>Live Attendance
+                    Log</h1>
+                <p class="text-muted small mb-0">Real-time monitoring and face recognition</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <button class="btn btn-danger btn-sm" onclick="clearLog()">
+                    <i class="fas fa-trash-alt me-1"></i> Clear Log
+                </button>
+                <a href="{{ url_for('export_attendance_log') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-file-excel me-1"></i> Export Log
+                </a>
+            </div>
+        </header>
+
+        <div class="row g-4">
+            <!-- Left: Video Feed -->
+            <div class="col-lg-7">
+                <div class="glass-card p-3 h-100">
+                    <div class="video-container">
+                        <img id="videoFeed" src="{{ url_for('video_feed_attendance') }}" alt="Live Feed">
+                    </div>
+                    <div class="instructions-panel">
+                        <h6 class="text-white mb-2"><i class="fas fa-info-circle me-2"></i>Operator Instructions</h6>
+                        <ul class="small mb-0 text-muted">
+                            <li>Ensure students face the camera directly.</li>
+                            <li>The system monitors entries (right to left) and exits (left to right).</li>
+                            <li>Optimal distance is 1-2 meters with good lighting.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Stats and Logs -->
+            <div class="col-lg-5">
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-4">
+                        <div class="glass-card stat-card">
+                            <div class="stat-value" id="totalEntries">0</div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="glass-card stat-card">
+                            <div class="stat-value" id="studentsPresent">0</div>
+                            <div class="stat-label">In-Class</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="glass-card stat-card">
+                            <div class="stat-value" id="unknownDetected">0</div>
+                            <div class="stat-label">Unknowns</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-0 overflow-hidden">
+                    <div
+                        class="px-3 py-2 border-bottom border-secondary d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 py-2"><i class="fas fa-list me-2"></i>Recent Activity</h6>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
+                            <label class="form-check-label small text-muted" for="autoRefresh">Live Updates</label>
+                        </div>
+                    </div>
+                    <div class="log-table-container">
+                        <table class="table table-dark table-hover mb-0" id="attendanceTable">
+                            <thead class="sticky-top bg-dark">
+                                <tr class="small text-muted">
+                                    <th>Time</th>
+                                    <th>Student</th>
+                                    <th>Event</th>
+                                    <th>Conf.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="noDataMessage" class="p-5 text-center text-muted" style="display: none;">
+                        <i class="fas fa-ghost fa-3x mb-3 opacity-25"></i>
+                        <p>No activity recorded yet...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoRefresh = true;
+
+        async function fetchLogs() {
+            if (!autoRefresh) return;
+            try {
+                const response = await fetch('/api/attendance/log');
+                const data = await response.json();
+                if (data.success) {
+                    updateUI(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch logs:", err);
+            }
+        }
+
+        function updateUI(data) {
+            // Update Stats
+            document.getElementById('totalEntries').textContent = data.statistics.total_entries;
+            document.getElementById('studentsPresent').textContent = data.statistics.students_present;
+            document.getElementById('unknownDetected').textContent = data.statistics.unknown_detected;
+
+            // Update Table
+            const tbody = document.getElementById('logTableBody');
+            const noData = document.getElementById('noDataMessage');
+
+            if (data.log_entries.length === 0) {
+                tbody.innerHTML = '';
+                noData.style.display = 'block';
+                return;
+            }
+
+            noData.style.display = 'none';
+            tbody.innerHTML = data.log_entries.map(entry => {
+                let badgeClass = 'status-unknown';
+                if (entry.event_type === 'ENTRY') badgeClass = 'status-entry';
+                if (entry.event_type === 'EXIT') badgeClass = 'status-exit';
+
+                return `
+                    <tr class="align-middle">
+                        <td class="small text-muted">${entry.timestamp.split(' ')[1]}</td>
+                        <td>
+                            <div class="fw-bold">${entry.name}</div>
+                            <div class="small text-muted" style="font-size: 0.7rem">${entry.roll_no}</div>
+                        </td>
+                        <td><span class="status-badge ${badgeClass}">${entry.event_type}</span></td>
+                        <td>
+                            <div class="progress" style="height: 4px; width: 40px; background: rgba(255,255,255,0.1)">
+                                <div class="progress-bar bg-info" style="width: ${entry.confidence}%"></div>
+                            </div>
+                            <span class="small" style="font-size: 0.65rem">${entry.confidence}%</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function clearLog() {
+            if (!confirm("Are you sure you want to clear the live log?")) return;
+            try {
+                const response = await fetch('/api/attendance/log/clear', { method: 'POST' });
+                const res = await response.json();
+                if (res.success) fetchLogs();
+            } catch (err) {
+                alert("Error clearing log");
+            }
+        }
+
+        document.getElementById('autoRefresh').addEventListener('change', (e) => {
+            autoRefresh = e.target.checked;
+        });
+
+        setInterval(fetchLogs, 2000);
+        fetchLogs();
+    </script>
+</body>
+
+</html>
